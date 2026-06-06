@@ -1,6 +1,6 @@
 import { JsonPipe } from '@angular/common';
 import { Component, signal } from '@angular/core';
-import { form, FormField, FormRoot } from '@angular/forms/signals';
+import { form, FormField, FormRoot, required } from '@angular/forms/signals';
 
 interface ContactForm {
   name: string;
@@ -21,14 +21,23 @@ export default class Forms {
     message: '',
   });
 
-  testForm = form(this.formModel, {
-    submission: {
-      action: async (formData) => {
-        console.log('Form submitted:', formData().controlValue());
-        formData().reset();
+  testForm = form(
+    this.formModel,
+
+    (p) => {
+      required(p.name);
+      required(p.email);
+      required(p.message);
+    },
+    {
+      submission: {
+        action: async (formData) => {
+          console.log('Form submitted:', formData().controlValue());
+          formData().reset();
+        },
       },
     },
-  });
+  );
 
   constructor() {}
 }

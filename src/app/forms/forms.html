@@ -9,6 +9,7 @@
           type="text"
           id="name"
           [formField]="testForm.name"
+          [class.border-red-500]="testForm.name().touched() && testForm.name().invalid()"
           placeholder="Enter your name"
           class="px-3 py-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
