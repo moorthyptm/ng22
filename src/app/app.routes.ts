@@ -6,4 +6,9 @@ export const routes: Routes = [
     loadComponent: () => import('./forms/forms'),
     title: 'Signal forms',
   },
+  {
+    path: 'resource',
+    loadComponent: () => import('./resource/resource'),
+    title: 'Signal resource | async',
+  },
 ];
