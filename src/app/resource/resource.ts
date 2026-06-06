@@ -1,5 +1,5 @@
 import { AsyncPipe, JsonPipe } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, httpResource } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -82,15 +82,19 @@ export default class Resource {
     debounce(schema.query, 1000);
   });
 
-  private http = inject(HttpClient);
+  // private http = inject(HttpClient);
 
-  posts = resource<Post[], string>({
-    params: () => this.model().query || '',
-    loader: ({ params }) =>
-      firstValueFrom(
-        this.http.get<Post[]>(`https://jsonplaceholder.typicode.com/posts?q=${params}`),
-      ),
-  });
+  // posts = resource<Post[], string>({
+  //   params: () => this.model().query || '',
+  //   loader: ({ params }) =>
+  //     firstValueFrom(
+  //       this.http.get<Post[]>(`https://jsonplaceholder.typicode.com/posts?q=${params}`),
+  //     ),
+  // });
+
+  posts = httpResource<Post[]>(
+    () => `https://jsonplaceholder.typicode.com/posts?q=${this.model().query}`,
+  );
 
   constructor() {
     effect(() => {
