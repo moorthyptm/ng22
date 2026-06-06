@@ -9,6 +9,7 @@ import {
   resource,
   signal,
 } from '@angular/core';
+import { debounce, form, required, FormField } from '@angular/forms/signals';
 import { firstValueFrom } from 'rxjs';
 
 interface Post {
@@ -27,11 +28,18 @@ interface Post {
     <div class="flex flex-row">
       <input
         type="text"
+        [formField]="formTest.query"
+        placeholder="Type to search..."
+        [class.border-red-500]="formTest.query().value() && posts.value()?.length === 0"
+        class="px-3 py-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+      <!-- <input
+        type="text"
         [value]="query()"
         (input)="query.set($event.target.value)"
         placeholder="Type to search..."
         class="px-3 py-2 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
+      /> -->
     </div>
     <!-- results -->
     <div class="w-full mt-4">
@@ -59,14 +67,25 @@ interface Post {
       }
     </div>
   </div> `,
+  imports: [FormField],
 })
 export default class Resource {
-  protected query = signal('');
-  private debounceQurey = debounced(this.query, 1000);
+  // protected query = signal('');
+  // private debounceQurey = debounced(this.query, 1000);
+
+  model = signal({
+    query: '',
+  });
+
+  formTest = form(this.model, (schema) => {
+    required(schema.query);
+    debounce(schema.query, 1000);
+  });
+
   private http = inject(HttpClient);
 
   posts = resource<Post[], string>({
-    params: () => this.debounceQurey.value() || '',
+    params: () => this.model().query || '',
     loader: ({ params }) =>
       firstValueFrom(
         this.http.get<Post[]>(`https://jsonplaceholder.typicode.com/posts?q=${params}`),
@@ -75,7 +94,7 @@ export default class Resource {
 
   constructor() {
     effect(() => {
-      console.log('Query changed:', this.query());
+      // console.log('Query changed:', this.query());
     });
   }
 }
