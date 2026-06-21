@@ -11,4 +11,8 @@ export const routes: Routes = [
     loadComponent: () => import('./resource/resource'),
     title: 'Signal resource | async',
   },
+  {
+    path: 'service',
+    loadChildren: () => import('./service/service-route')
+  }
 ];
